@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": true,
+    "properties": {
+        "ecs": {
+            "default": [],
+            "description": "Specify the ECS instances to be created",
+            "items": {
+                "additionalProperties": true,
+                "properties": {
+                    "additional_disk": {
+                        "additionalProperties": {
+                            "additionalProperties": true,
+                            "properties": {
+                                "size": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "size"
+                            ],
+                            "type": "object"
+                        },
+                        "type": "object",
+                        "default": {}
+                    },
+                    "az": {
+                        "type": "string"
+                    },
+                    "default_disk": {
+                        "type": "number",
+                        "default": 150
+                    },
+                    "ecs_size": {
+                        "type": "string",
+                        "enum": [
+                            "ecs_small",
+                            "ecs_medium",
+                            "ecs_large"
+                        ]
+                    },
+                    "hostname": {
+                        "type": "string"
+                    },
+                    "subnet": {
+                        "type": "string",
+                        "enum": [
+                            "app",
+                            "db",
+                            "dmz"
+                        ]
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "default": "",
+                        "options": {
+                            "hidden": true
+                        }
+                    }
+                },
+                "required": [
+                    "additional_disk",
+                    "az",
+                    "default_disk",
+                    "ecs_size",
+                    "hostname",
+                    "subnet"
+                ],
+                "type": "object"
+            },
+            "type": "array"
+        }
+    },
+    "required": [],
+    "type": "object"
+}
