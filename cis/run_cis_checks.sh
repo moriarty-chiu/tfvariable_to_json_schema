@@ -27,11 +27,54 @@ echo ""
 
 # 5.1.2 Minimize access to secrets (Automated)
 # Note: This is an automated check in kube-bench.
+# WARNING: The kubectl command below can hang or take a very long time in large clusters.
+# This script uses a timeout mechanism as a workaround.
 echo "5.1.2 Minimize access to secrets:"
-access_secrets=$(kubectl auth can-i get,list,watch secrets --all-namespaces --as=system:authenticated 2>&1)
-echo "  system:authenticated can get/list/watch secrets: ${access_secrets}"
-if [[ "${access_secrets}" == "yes" ]]; then
-  echo "  WARNING: system:authenticated has access to secrets."
+# Use a timeout to prevent the script from hanging indefinitely.
+# Adjust the timeout duration (in seconds) as needed for your environment.
+timeout_duration=30
+if command -v timeout &> /dev/null; then
+    access_secrets=$(timeout "${timeout_duration}" kubectl auth can-i get,list,watch secrets --all-namespaces --as=system:authenticated 2>&1)
+    exit_status=$?
+    if [ $exit_status -eq 124 ]; then
+        echo "  WARNING: Command timed out after ${timeout_duration} seconds. This might indicate a problem or a large number of namespaces."
+        echo "  Manual Check Required: Please manually verify access to secrets for system:authenticated."
+    else
+        echo "  system:authenticated can get/list/watch secrets: ${access_secrets}"
+        if [[ "${access_secrets}" == "yes" ]]; then
+          echo "  WARNING: system:authenticated has access to secrets."
+        fi
+    fi
+else
+    # Fallback for systems without the 'timeout' command (like macOS)
+    # Start the command in the background and kill it after the timeout
+    echo "  Checking access (this might take a moment or timeout)..."
+    kubectl auth can-i get,list,watch secrets --all-namespaces --as=system:authenticated > /tmp/kubectl_secrets_check.out 2>&1 &
+    bg_pid=$!
+    (
+        sleep "${timeout_duration}"
+        if kill -0 $bg_pid 2>/dev/null; then
+            echo "  WARNING: Command timed out after ${timeout_duration} seconds. Killing the process."
+            kill $bg_pid 2>/dev/null
+            echo "  WARNING: Command timed out. This might indicate a problem or a large number of namespaces."
+            echo "  Manual Check Required: Please manually verify access to secrets for system:authenticated."
+            # Clear the output file if it was created
+            > /tmp/kubectl_secrets_check.out
+        fi
+    ) &
+    killer_pid=$!
+    wait $bg_pid 2>/dev/null
+    wait_status=$?
+    kill $killer_pid 2>/dev/null
+    # Read the output if the command completed before the timeout
+    if [ -s /tmp/kubectl_secrets_check.out ]; then
+        access_secrets=$(cat /tmp/kubectl_secrets_check.out)
+        echo "  system:authenticated can get/list/watch secrets: ${access_secrets}"
+        if [[ "${access_secrets}" == "yes" ]]; then
+          echo "  WARNING: system:authenticated has access to secrets."
+        fi
+        rm -f /tmp/kubectl_secrets_check.out
+    fi
 fi
 echo "Remediation: Where possible, remove get, list and watch access to Secret objects in the cluster."
 echo ""
