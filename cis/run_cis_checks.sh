@@ -226,11 +226,36 @@ echo "  Remediation: Ensure that either Pod Security Admission or an external po
 for every namespace which contains user workloads."
 echo ""
 
+# 5.2.2 Minimize the admission of privileged containers (Manual)
 echo "5.2.2 Minimize the admission of privileged containers (Manual)"
-echo "  Manual Check: Review policies for privileged container admission."
-echo "  Remediation: Add policies to each namespace in the cluster which has user workloads to restrict the
-admission of privileged containers."
-echo ""
+echo "  Automated Check: Detecting privileged containers in the cluster..."
+# Check if we can connect to the cluster
+if kubectl cluster-info >/dev/null 2>&1; then
+  # Get pods with privileged containers
+  privileged_pods=$(kubectl get pods -A -o=jsonpath='{range .items[*]}{.metadata.namespace}{"\t"}{.metadata.name}{"\t"}{.spec.containers[*].securityContext.privileged}{"\n"}{end}' 2>/dev/null | grep "true" || true)
+
+  if [[ -n "$privileged_pods" ]]; then
+    echo "  WARNING: Found pods with privileged containers:"
+    echo "$privileged_pods" | while IFS= read -r line; do
+      namespace=$(echo "$line" | awk '{print $1}')
+      pod_name=$(echo "$line" | awk '{print $2}')
+      echo "    - Namespace: $namespace, Pod: $pod_name"
+    done
+  else
+    echo "  No privileged containers found in the cluster."
+  fi
+
+  # Also show all security contexts for detailed review
+  echo "  Detailed inventory of security contexts (sample output):"
+  kubectl get pods -A -o=jsonpath='{range .items[*]}{@.metadata.namespace}/{@.metadata.name}:{@..securityContext}
+{end}' 2>/dev/null | head -10 || echo "  No pods found or error retrieving data."
+else
+  echo "  WARNING: Unable to connect to Kubernetes cluster. Skipping automated check."
+  echo "  Please ensure the cluster is running and kubectl is configured correctly."
+  echo "  For manual check, you can run:"
+  echo "    kubectl get pods -A -o=jsonpath='\${range .items[*]}{@.metadata.namespace}/{@.metadata.name}:{@..securityContext}
+{end}'"
+fi
 
 echo "5.2.3 Minimize the admission of containers wishing to share the host process ID namespace (Manual)"
 echo "  Manual Check: Review policies for hostPID containers."
