@@ -1,0 +1,2 @@
+# Requirements for Terraform Variable to JSON Schema Converter
+# This project uses only Python standard library modules, so no external dependencies are needed.

@@ -5,3 +5,8 @@
 __pycache__/
 cis/
 env/
+venv/
+
+# Ignore all JSON files in modules and schemas folders
+modules/**/*.json
+schemas/**/*.json

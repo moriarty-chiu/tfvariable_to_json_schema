@@ -25,4 +25,11 @@ variable "ecs" {
     ])
     error_message = "Invalid subnet. Valid options are app, db, dmz"
   }
+  validation {
+    condition = alltrue([
+      for ecs_instance in var.ecs :
+      contains(["az1", "az2"], ecs_instance.az)
+    ])
+    error_message = "Invalid az. Valid options are az1, az2"
+  }
 }

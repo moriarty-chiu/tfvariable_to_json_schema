@@ -8,7 +8,7 @@
             "items": {
                 "additionalProperties": true,
                 "properties": {
-                    "additional_disk": {
+                    "additional_disks": {
                         "additionalProperties": {
                             "additionalProperties": true,
                             "properties": {
@@ -60,9 +60,7 @@
                     }
                 },
                 "required": [
-                    "additional_disk",
                     "az",
-                    "default_disk",
                     "ecs_size",
                     "hostname",
                     "subnet"
