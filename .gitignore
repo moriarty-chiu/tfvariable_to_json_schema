@@ -1,12 +1,75 @@
+# IDE and Editor files
 .vscode/
 .idea/
-.DS_Store
+*.swp
+*.swo
+*~
 
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
 cis/
 env/
 venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Ignore all JSON files in modules and schemas folders
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Project specific: Ignore all JSON files in modules and schemas folders
 modules/**/*.json
 schemas/**/*.json
+
+# Temporary files
+*.tmp
+*.temp
+*.log

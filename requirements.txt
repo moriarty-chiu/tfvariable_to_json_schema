@@ -1,2 +1,58 @@
 # Requirements for Terraform Variable to JSON Schema Converter
-# This project uses only Python standard library modules, so no external dependencies are needed.
+#
+# This project is designed to work with minimal dependencies for maximum portability.
+# All scripts have graceful degradation when optional dependencies are missing.
+
+# ============================================================================
+# CORE DEPENDENCIES (Required for full functionality)
+# ============================================================================
+
+# For advanced Terraform HCL parsing (used in terraform_to_json_schema.py)
+# Enables professional-grade HCL parsing with better error handling
+python-hcl2>=4.3.0
+
+# For JSON Schema validation and advanced features (used in terraform_to_json_schema.py)
+# Provides schema validation and advanced JSON Schema features
+jsonschema>=4.0.0
+
+# ============================================================================
+# OPTIONAL DEPENDENCIES (Enhanced functionality)
+# ============================================================================
+
+# For JSON schema reference resolution (used in bundle_schema.py)
+# Enables $ref resolution in JSON schemas
+jsonref>=1.1.0
+
+# ============================================================================
+# DEVELOPMENT DEPENDENCIES (Optional, for development/testing)
+# ============================================================================
+
+# For testing (uncomment if needed)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+
+# For code formatting (uncomment if needed)
+# black>=22.0.0
+# isort>=5.10.0
+
+# For type checking (uncomment if needed)
+# mypy>=1.0.0
+
+# ============================================================================
+# INSTALLATION INSTRUCTIONS
+# ============================================================================
+#
+# For basic functionality (with graceful degradation):
+#   pip install -r requirements.txt
+#
+# For minimal installation (standard library only):
+#   # No installation needed - scripts will work with reduced functionality
+#
+# For development:
+#   # Uncomment development dependencies above and run:
+#   pip install -r requirements.txt
+#
+# Using virtual environment (recommended):
+#   python3 -m venv venv
+#   source venv/bin/activate  # On Windows: venv\Scripts\activate
+#   pip install -r requirements.txt

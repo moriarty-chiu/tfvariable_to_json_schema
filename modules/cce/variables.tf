@@ -25,7 +25,7 @@ variable "cce" {
   validation {
     condition = alltrue([
       for cce_instance in var.ecs :
-      contains(["app", "db", "dmz"], cce_instance.subnet)
+      contains(["app", "db", "dmz"], cce_instance.subnet_id)
     ])
     error_message = "Invalid subnet. Valid options are app, db, dmz"
   }

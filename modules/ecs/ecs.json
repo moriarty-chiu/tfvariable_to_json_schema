@@ -3,33 +3,13 @@
     "additionalProperties": true,
     "properties": {
         "ecs": {
-            "default": [],
-            "description": "Specify the ECS instances to be created",
+            "type": "array",
             "items": {
+                "type": "object",
                 "additionalProperties": true,
                 "properties": {
-                    "additional_disks": {
-                        "additionalProperties": {
-                            "additionalProperties": true,
-                            "properties": {
-                                "size": {
-                                    "type": "number"
-                                }
-                            },
-                            "required": [
-                                "size"
-                            ],
-                            "type": "object"
-                        },
-                        "type": "object",
-                        "default": {}
-                    },
-                    "az": {
+                    "hostname": {
                         "type": "string"
-                    },
-                    "default_disk": {
-                        "type": "number",
-                        "default": 150
                     },
                     "ecs_size": {
                         "type": "string",
@@ -39,8 +19,12 @@
                             "ecs_large"
                         ]
                     },
-                    "hostname": {
-                        "type": "string"
+                    "az": {
+                        "type": "string",
+                        "enum": [
+                            "az1",
+                            "az2"
+                        ]
                     },
                     "subnet": {
                         "type": "string",
@@ -49,6 +33,26 @@
                             "db",
                             "dmz"
                         ]
+                    },
+                    "default_disk": {
+                        "type": "number",
+                        "default": 150
+                    },
+                    "additional_disks": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": true,
+                            "properties": {
+                                "size": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "size"
+                            ]
+                        },
+                        "default": {}
                     },
                     "id": {
                         "type": "string",
@@ -60,14 +64,14 @@
                     }
                 },
                 "required": [
-                    "az",
-                    "ecs_size",
                     "hostname",
+                    "ecs_size",
+                    "az",
                     "subnet"
-                ],
-                "type": "object"
+                ]
             },
-            "type": "array"
+            "description": "Specify the ECS instances to be created",
+            "default": []
         }
     },
     "required": [],
